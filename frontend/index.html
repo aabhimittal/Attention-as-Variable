@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention as a Variable</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;🎛️&lt;/text&gt;&lt;/svg&gt;">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Attention as a Variable</h1>
+    <p class="sub">A real forward pass of <code id="model-name">distilgpt2</code>. Click a head, paint its attention matrix, and watch the next-token distribution shift live.</p>
+  </div>
+  <div class="api-box">
+    <label for="api">API</label>
+    <input id="api" type="text" placeholder="same origin" spellcheck="false">
+    <span id="status" class="status">connecting…</span>
+  </div>
+</header>
+
+<main>
+  <aside class="panel left">
+    <label class="panel-label" for="text">Prompt</label>
+    <textarea id="text" rows="3" spellcheck="false">When Mary and John went to the store, John gave a drink to</textarea>
+    <select id="examples">
+      <option value="">Examples…</option>
+      <option>When Mary and John went to the store, John gave a drink to</option>
+      <option>The cat sat on the</option>
+      <option>The capital of France is</option>
+      <option>1 2 3 4 5 6 7 8</option>
+      <option>The quick brown fox jumps over the lazy</option>
+    </select>
+    <div class="panel-label">Heads <span class="hint">layer × head — click to edit</span></div>
+    <div id="grid"></div>
+    <div class="panel-label">Active interventions</div>
+    <div id="chips"><span class="hint">none — the model is un-edited</span></div>
+    <button id="clear-all" class="ghost">Clear all interventions</button>
+  </aside>
+
+  <section class="panel center">
+    <div class="center-head">
+      <h2 id="sel-title">Layer 0 · Head 0</h2>
+      <span class="hint">click / drag cells to paint attention</span>
+    </div>
+    <div class="toolbar">
+      <button data-op="zero" title="Knock the head out: all its attention weights become 0">Zero head</button>
+      <button data-op="uniform" title="Every position attends equally to all previous positions">Uniform</button>
+      <button data-op="self" title="Every position attends only to itself">Self</button>
+      <button data-op="prev" title="Every position attends only to the previous token">Prev token</button>
+      <button data-op="first" title="Every position attends only to position 0 (attention sink)">First token</button>
+      <button id="reset-head" class="ghost">Reset head</button>
+    </div>
+    <div class="toolbar sliders">
+      <label>Scale <input id="scale" type="range" min="0" max="2" step="0.05" value="1"><span id="scale-val">1.00</span></label>
+      <label>Brush <input id="brush" type="range" min="0" max="1" step="0.05" value="0.9"><span id="brush-val">0.90</span></label>
+      <label class="check"><input id="renorm" type="checkbox" checked> renormalize row</label>
+    </div>
+    <canvas id="main"></canvas>
+    <div id="tooltip" class="tooltip" hidden></div>
+  </section>
+
+  <aside class="panel right">
+    <div class="panel-label">Next-token prediction</div>
+    <div class="legend">
+      <span><i class="sw sw-base"></i>baseline</span>
+      <span><i class="sw sw-int"></i>intervened</span>
+    </div>
+    <div id="dist"></div>
+    <div class="tiles">
+      <div class="tile"><div class="tile-label">KL(base ‖ intervened)</div><div class="tile-value" id="kl">0.0000</div></div>
+      <div class="tile"><div class="tile-label">Top token</div><div class="tile-value" id="topshift">—</div></div>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  <span>Backend: hooked GPT-2 forward pass over FastAPI · zero out a head, force a pattern, clamp a cell — every edit re-runs the model.</span>
+  <a href="https://github.com/aabhimittal/Attention-as-Variable" target="_blank" rel="noopener">GitHub</a>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

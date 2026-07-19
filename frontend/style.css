@@ -1,0 +1,151 @@
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --border: rgba(11, 11, 11, 0.10);
+  --base: #2a78d6;   /* categorical slot 1: baseline */
+  --int: #008300;    /* categorical slot 2: intervened */
+  --accent: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --border: rgba(255, 255, 255, 0.10);
+    --base: #3987e5;
+    --int: #008300;
+    --accent: #3987e5;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+code { font-family: ui-monospace, monospace; font-size: 0.92em; }
+
+header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 16px; padding: 16px 20px 8px; flex-wrap: wrap;
+}
+h1 { margin: 0; font-size: 20px; }
+.sub { margin: 4px 0 0; color: var(--ink-2); max-width: 60ch; }
+.api-box { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.api-box input {
+  width: 230px; padding: 5px 8px; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--surface); color: var(--ink); font-size: 12px;
+}
+.status { white-space: nowrap; }
+.status.ok { color: #006300; }
+:root[data-theme="dark"] .status.ok { color: #0ca30c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .status.ok { color: #0ca30c; } }
+.status.err { color: #d03b3b; }
+
+main {
+  display: grid; grid-template-columns: 300px 1fr 320px;
+  gap: 12px; padding: 8px 20px 16px; align-items: start;
+}
+@media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+
+.panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px;
+}
+.panel-label { font-size: 12px; font-weight: 600; color: var(--ink-2); margin: 12px 0 6px; }
+.panel-label:first-child { margin-top: 0; }
+.hint { font-weight: 400; color: var(--muted); font-size: 12px; }
+
+textarea, select {
+  width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--page); color: var(--ink); font: inherit; resize: vertical;
+}
+select { margin-top: 6px; }
+
+#grid { display: flex; flex-direction: column; gap: 4px; }
+.grid-row { display: flex; align-items: center; gap: 4px; }
+.grid-row .lbl { width: 22px; flex: none; font-size: 11px; color: var(--muted); text-align: right; padding-right: 2px; }
+.grid-row canvas {
+  flex: 1 1 0; min-width: 0; aspect-ratio: 1; height: auto; max-width: 26px;
+  border-radius: 4px; cursor: pointer; border: 1px solid var(--border);
+}
+.grid-row canvas.sel { outline: 2px solid var(--accent); outline-offset: 1px; }
+.grid-row canvas.edited { border-color: var(--int); box-shadow: 0 0 0 1px var(--int); }
+
+#chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
+  padding: 3px 8px; border-radius: 999px; border: 1px solid var(--int); color: var(--ink-2);
+  cursor: pointer;
+}
+.chip b { color: var(--ink); font-weight: 600; }
+.chip .x { color: var(--muted); }
+.chip:hover .x { color: #d03b3b; }
+
+button {
+  font: inherit; font-size: 13px; padding: 6px 10px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--page); color: var(--ink); cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.ghost { color: var(--ink-2); }
+#clear-all { margin-top: 10px; width: 100%; }
+
+.center-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.center-head h2 { margin: 0; font-size: 16px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.toolbar.sliders { gap: 16px; color: var(--ink-2); font-size: 12px; align-items: center; }
+.toolbar.sliders label { display: inline-flex; align-items: center; gap: 6px; }
+.toolbar.sliders input[type="range"] { width: 110px; accent-color: var(--accent); }
+.check input { accent-color: var(--accent); }
+
+#main { width: 100%; max-width: 640px; cursor: crosshair; touch-action: none; }
+
+.tooltip {
+  position: fixed; pointer-events: none; z-index: 10;
+  background: var(--ink); color: var(--page);
+  font-size: 12px; padding: 4px 8px; border-radius: 6px; white-space: nowrap;
+}
+
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--ink-2); margin-bottom: 8px; }
+.legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; }
+.sw-base { background: var(--base); }
+.sw-int { background: var(--int); }
+
+#dist { display: flex; flex-direction: column; gap: 7px; }
+.bar-row { display: grid; grid-template-columns: 74px 1fr; gap: 8px; align-items: center; }
+.bar-row .tok {
+  font-family: ui-monospace, monospace; font-size: 12px; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: pre; text-align: right;
+}
+.bar-pair { display: flex; flex-direction: column; gap: 2px; }
+.bar { height: 9px; border-radius: 0 4px 4px 0; min-width: 1px; position: relative; }
+.bar.base { background: var(--base); }
+.bar.int { background: var(--int); }
+.bar span {
+  position: absolute; left: calc(100% + 5px); top: 50%; transform: translateY(-50%);
+  font-size: 10px; color: var(--ink-2); font-variant-numeric: tabular-nums;
+}
+
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.tile { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+.tile-label { font-size: 11px; color: var(--muted); }
+.tile-value { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tile-value small { font-weight: 400; color: var(--muted); }
+
+footer {
+  padding: 8px 20px 20px; color: var(--muted); font-size: 12px;
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+footer a { color: var(--accent); }
